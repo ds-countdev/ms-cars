@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: ms-cars
+  cloud:
+   config:
+    enabled: false
+    uri: ${config_server_uri}
+    profile: ${profile}

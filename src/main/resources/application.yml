@@ -1,0 +1,25 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: ms-cars
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${datasource_url}
+    username: ${datasource_username}
+    password: ${datasource_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+message:
+  error_handler:
+    code_400: The request is incorrect, please verify your information
+    code_500: There was a server error and the request couldnt be completed
+    unique_key_code_400: Duplicate data
+  service:
+    success:
+      find: success find
+    exceptions:
+      validate: Couldn't validate request
+  test: ${hello}_${name}

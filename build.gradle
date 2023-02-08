@@ -1,0 +1,109 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.7'
+	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	id 'jacoco'
+	id 'java'
+}
+
+group = 'mx.com.cars'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "2021.0.2")
+	
+}
+
+	def gcp_environment = 'prod'
+
+sourceSets.all { ext.purpose = null }
+
+sourceSets {
+    $artifact_registry_url_ist {
+        purpose = "ist"
+    }
+    $artifact_registry_url_prod {
+        purpose = "prod"
+    }
+}
+
+def new_name = 'hello'
+
+sourceSets.matching { it.purpose == "$gcp_environment" }.each { new_name = it.name }
+
+tasks.register('printProperties') {
+    doLast {
+        
+        println new_name
+    }
+}
+
+
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'mysql:mysql-connector-java'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation files('C:\\Users\\diego\\OneDrive\\Documentos\\Java_jars\\error-handler.jar')
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+test {
+	useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+
+tasks.named('test') {
+	useJUnitPlatform()
+	
+}
+
+jacocoTestReport{                 
+	dependsOn test
+	reports {
+		html.enabled = true
+	}
+	afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                "**/config/*",
+                "**/entity/*",
+                "**/model/*",
+                "**/util/*",
+            ])
+        }))
+    }
+	finalizedBy jacocoTestCoverageVerification  
+}
+
+
+
+
